@@ -46,9 +46,6 @@ jobs:
 
         - name: Go Unit Test
           run: go test -tags test ./... -count=1
-          env:
-            CK_HOST: localhost
-            CK_PORT: 6379
 
         - name: Build
           run: go build -tags prod -v -o session api/server.go
