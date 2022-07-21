@@ -4,7 +4,7 @@
 
 #### Goal
 
-A re-usable GoLang template, that saves me time and ensures I start projects with a good structure.
+A re-usable GoLang template for a web/api server, that saves me time and ensures I start projects with a good structure.
 
 #### Strategy
 
