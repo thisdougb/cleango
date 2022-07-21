@@ -33,6 +33,17 @@ $ go run -tags dev api/server.go
 2022/07/21 11:33:12 server.go:34: Datastore connected.
 2022/07/21 11:33:12 server.go:46: webserver.Start(): listening on port 8080
 ```
+You can test everything works:
+```
+$ curl -X POST http://localhost:8080/thing/enable/ -H "Content-Type: application/json" -d '{"thing_id": 1}'                                                                             
+OK
+
+$ redis-cli
+127.0.0.1:6379> keys *
+1) "app:thing:1:status"
+127.0.0.1:6379> get "app:thing:1:status"
+"1"
+```
 
 #### Logging
 
