@@ -2,54 +2,55 @@
 
 [![release](https://github.com/thisdougb/cleango/actions/workflows/release.yaml/badge.svg)](https://github.com/thisdougb/cleango/actions/workflows/release.yaml)
 
-A template Go module, making it easy to start projects with consistent structure.
-Use the button above "Use this template" to get your Go project off to a clean start.
+#### Goal
 
-* Leans on clean architecture
-* Implements tests
-* Build tags
-* CI via GitHub Actions workflow
+A re-usable GoLang template, that saves me time and ensures I start projects with a good structure.
 
-### Motivation
-My aim with this repo is to give myself a template to copy, each time I start a new project in Go.
+#### Strategy
 
-Underlying this I have, over the years, been living with various languages to try and find one that's fast to prototype whilst also being type safe.
-I'm liking Go, and this template is an attempt to create a pattern for structuring Go projects loose-ishly based on Clean Architecture.
+- a runnable app as a template, so we start from a known-good
+- include features most likely to be used, to avoid masses of boiler-plate code
+- focus on making development easier and simpler
 
-[Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) has lofty aims.
-There aren't many resources out there that lay it out in Go.
-I don't either, because Go doesn't map directly, or my projects don't fit neatly.
+Use the button above "Use this template".
 
-But I am interested in architecture that makes testing easy, so I persisted.
-As a nice bonus I found it easy and fast to build APIs, because the architecture made it so.
+#### Get Started
 
-So take this as a pragmatic approach to Clean Architecture using Go.
-
-### Notes
-Some notes on the code, or style, or implications.
-I'm not a great Go coder, I'm still learning.
-These notes are aimed at other learners.
-
-Feedback is very much hoped for, to make this template and my Go-skills better.
-
-#### Reset Paths
 When you template this repo it will contain 'thisdougb/cleango' in the pkg paths.
 Here's how to reset those paths, using sed on Mac OS (at least), after you've cloned your new repo.
 
-Substitute your GitHub name for mygithubname, and your repo name for myproject:
+Substitute your GitHub name for _mygithubname_, and your repo name for _myproject_:
 ```
 $ git clone git@github.com:thisdougb/myproject.git
-$ find myproject \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i '' -e 's/thisdougb/mygithubname/g'
-$ find myproject \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i '' -e 's/cleango/myproject/g'
+$ cd myproject
+$ find . \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i '' -e 's/thisdougb/mygithubname/g'
+$ find . \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i '' -e 's/cleango/myproject/g'
+```
+Then run (assumes a local Redis instance):
+```
+$ go run -tags dev api/server.go
+2022/07/21 11:33:12 server.go:27: Datastore connecting, host: 'localhost:6379', username:
+2022/07/21 11:33:12 server.go:34: Datastore connected.
+2022/07/21 11:33:12 server.go:46: webserver.Start(): listening on port 8080
+```
+
+#### Logging
+In [log.go](https://github.com/thisdougb/cleango/blob/d33a853acdfc60213e31f1381f9f3fea907d62ec/pkg/usecase/enablething/log.go#L7) we have a simple init() which sets the formatting for log statements.
+It is easier and quicker to troubleshooting problems when you know where the log statements are from.
+
+Ensuring filenames are descriptive, rather than main.go, helps here:
+```
+2022/07/21 11:33:12 enablething.go:27: error, ostrich 43723 has 8 legs.
 ```
 
 #### Build Tags
-I love build tags.
-This is a big win when using Go, because it's easy to switch config.
+I use build tags.
+All test and mock files are _dev_, so excluded in the final build.
 
+This also makes switching templating easy between environments.
 ```
 $ go run -tags dev api/server.go
-2021/04/21 22:03:52 webserver.Start(): listening on port 8080
+2022/07/21 11:33:12 server.go:46: webserver.Start(): listening on port 8080
 ```
 
 Here is an [example](https://github.com/thisdougb/cleango/blob/204df73075f69d8ff3fff555f1b739f40c060d3a/config/dev_config.go#L1) that says include this file when -tags is dev or test.
@@ -58,13 +59,8 @@ Pulling in that particular file.
 
 This is good because if you're test want to run quicker, you can set low limits for various things.
 
-#### Passing Database Connection
-This was a big challenge, as it is in most languages.
-I found a solution which made a lot of sense, and fits right in with Clean Architecture.
-It also makes testing and mocks really easy.
+#### Passing Datastore Reference
 
-There are a lot of frameworks for http handling.
-I dislike frameworks because they add dependencies, which often add more complexity that you need.
 So [here](https://github.com/thisdougb/cleango/blob/main/api/handlers/env.go) I use an Env struct to reference Service pointers.
 This allows seamless passing of the datastore connection (or mock) to the handlers.
 
@@ -75,40 +71,8 @@ That's where my Env struct came from.
 Usecase is a core Clean Architecture idea, and a little vague.
 I think of it as, 'an action that happens, like making a coffee.'
 There's often multiple steps to produce an outcome.
+
 An http handler depends on a usecase, but the usecase knows nothing about the http handler.
-
-The usecase is also where I implement my datastore mocks.
-Mock come after Interface.
-
-#### Interface
-The [interface](https://github.com/thisdougb/cleango/blob/main/pkg/usecase/enablething/1_interface.go) for a usecase is imported by the datastore, don't repeat yourself.
-Interfaces in Go make code simpler and more robust, so learn interfaces.
-
-[This](https://github.com/thisdougb/cleango/blob/2e28d75fb42b6559c34dab7fd86ac69aaacbeb8e/pkg/datastore/interface.go#L12) is where the datastore interface references the usecase interface.
-
-#### Mocks
-Mocks, I love mocks.
-But mocking datastores and methods somehow always seems confusing.
-
-To be clear, I'm mocking the datastore methods.
-When my usecase makes a call to a datastore method, when testing it's my mocks that are injected.
-
-[Here](https://github.com/thisdougb/cleango/blob/main/pkg/usecase/enablething/5_mock_writer.go) is the mock method, it mocks the call to the datastore method.
-I have conditionals here, to simulate responses from the real method [here](https://github.com/thisdougb/cleango/blob/971877d70fe85886b42d81e1025da26a6b7978c4/pkg/datastore/redis/thing.go#L7).
-
-And [here's](https://github.com/thisdougb/cleango/blob/971877d70fe85886b42d81e1025da26a6b7978c4/api/handlers/enablething_test.go#L24) another thing.
-From a higher level method, I'm using data that triggers the mock to respond in a particular way for testing.
-This might not be pure, but it's very handy and cuts down on a lot of mocking code.
-
-I spent a lot of time figuring out mocking, in various languages.
-Using Go, Clean Architecture, Env struct, etc, are where I'm currently at.
-And it works well like this, without too much duplicate testing code.
-
-Wider point.
-Tests are not for 'production code', they are for all code.
-Tests make your development quicker overall.
-For years I thought tests were a hassle getting in the way of writing code.
-If you're still thinking that, read [The Tortoise and the Hare](https://en.wikipedia.org/wiki/The_Tortoise_and_the_Hare).
 
 #### File Numbering
 I use file name numbering for files that are part of the templating pattern.
@@ -123,6 +87,6 @@ total 56
 -rw-r--r--  1 thisdougb  staff  179 21 Apr 19:43 3_mock.go
 -rw-r--r--  1 thisdougb  staff   77 21 Apr 19:43 4_mock_reader.go
 -rw-r--r--  1 thisdougb  staff  378 21 Apr 20:17 5_mock_writer.go
--rw-r--r--  1 thisdougb  staff  433 21 Apr 20:57 main.go
--rw-r--r--  1 thisdougb  staff  899 21 Apr 20:15 main_test.go
+-rw-r--r--  1 thisdougb  staff  433 21 Apr 20:57 enablething.go
+-rw-r--r--  1 thisdougb  staff  899 21 Apr 20:15 enablething_test.go
 ```
