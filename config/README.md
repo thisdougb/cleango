@@ -16,16 +16,16 @@ Update the defaultValues map with a setting you want to use, giving a reasonable
 In code we can retrieve a config setting like this:
 ```
 import (
-	"github.com/thisdougb/cleango/config"
+  "github.com/thisdougb/cleango/config"
 )
 
 func main() {
 
-	var cfg *config.Config // dynamic config settings
+  var cfg *config.Config // dynamic config settings
 
-	print(cfg.ValueAsStr("REDIS_HOST"))  // string at the point of use
-    print(cfg.ValueAsInt("MAX_THREADS")) // int at the point of use
-    print(cfg.ValueAsBool("DEBUG_ON"))   // bool at the point of use
+  print(cfg.ValueAsStr("REDIS_HOST"))  // string at the point of use
+  print(cfg.ValueAsInt("MAX_THREADS")) // int at the point of use
+  print(cfg.ValueAsBool("DEBUG_ON"))   // bool at the point of use
 }
 ```
 
