@@ -7,17 +7,35 @@ import (
 	"github.com/thisdougb/cleango/pkg/usecase/enablething"
 	"log"
 	"net/http"
-	"os"
+	"time"
 )
 
 func main() {
 
-	ds := redis.NewRedisDatastore(config.DB_HOST, config.DB_PORT)
+	var cfg *config.Config // dynamic config settings
 
-	result := ds.Connect()
-	if !result {
-		log.Println("Datasore connection failed, exiting...")
-		os.Exit(1)
+	ds := redis.NewRedisDatastore(
+		cfg.ValueAsStr("REDIS_HOST"),
+		cfg.ValueAsStr("REDIS_PORT"),
+		cfg.ValueAsStr("REDIS_USERNAME"),
+		cfg.ValueAsStr("REDIS_PASSWORD"),
+		cfg.ValueAsBool("REDIS_TLS"))
+
+	// To be container friendly loop until we get a datastore connection. Otherwise the container
+	// goes into crash-loop and it's harder to troubleshoot.
+	for {
+		log.Printf("Datastore connecting, host: '%s:%s', username: %s\n",
+			cfg.ValueAsStr("REDIS_HOST"),
+			cfg.ValueAsStr("REDIS_PORT"),
+			cfg.ValueAsStr("REDIS_USERNAME"))
+
+		err := ds.Connect()
+		if err == nil {
+			log.Println("Datastore connected.")
+			break
+		}
+		log.Println("Datastore connect failed:", err.Error())
+		time.Sleep(5 * time.Second)
 	}
 	defer ds.Disconnect()
 
@@ -25,6 +43,6 @@ func main() {
 
 	http.HandleFunc("/thing/enable/", env.EnableThing)
 
-	log.Println("webserver.Start(): listening on port", config.API_PORT)
-	log.Fatal(http.ListenAndServe(":"+config.API_PORT, nil))
+	log.Println("webserver.Start(): listening on port", cfg.ValueAsStr("API_PORT"))
+	log.Fatal(http.ListenAndServe(":"+cfg.ValueAsStr("API_PORT"), nil))
 }
