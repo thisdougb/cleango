@@ -61,7 +61,7 @@ env:
 ```
 And create the secret itself:
 ```
-kubectl create secret generic myapp_credentials --from-literal=username=d3xg45sdf35 --from-literal=password=asdneqw234asck
+$ kubectl create secret generic myapp_credentials --from-literal=username=d3xg45sdf35 --from-literal=password=asdneqw234asck
 ```
 
 #### Template Paths
@@ -72,6 +72,6 @@ Literal paths can be problematic between a dev env and production.
 GetTemplatePath(fileName string) string
 ```
 
-This method is included via Go build tags (dev or !dev), and gives a simple way to set a file path between environments.  I use this to handle gohtml template files.
+[This](https://github.com/thisdougb/cleango/blob/main/config/dev_config.go#L9) method is included via Go build tags (dev or !dev), and gives a simple way to set a file path between environments.  I use this to handle gohtml template files.
 
 In your IDE/editor you need to ensure that your save/test actions are called with _-tags dev_.
