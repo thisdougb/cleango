@@ -35,7 +35,8 @@ $ go run -tags dev api/server.go
 ```
 
 #### Logging
-In [log.go](https://github.com/thisdougb/cleango/blob/d33a853acdfc60213e31f1381f9f3fea907d62ec/pkg/usecase/enablething/log.go#L7) we have a simple init() which sets the formatting for log statements.
+
+In [log.go](https://github.com/thisdougb/cleango/blob/refactor_logging/api/log.go#L7) we have a simple init() which sets the formatting for log statements.
 It is easier and quicker to troubleshooting problems when you know where the log statements are from.
 
 Ensuring filenames are descriptive, rather than main.go, helps here:
@@ -44,6 +45,7 @@ Ensuring filenames are descriptive, rather than main.go, helps here:
 ```
 
 #### Build Tags
+
 I use build tags.
 All test and mock files are _dev_, so excluded in the final build.
 
@@ -52,12 +54,6 @@ This also makes switching templating easy between environments.
 $ go run -tags dev api/server.go
 2022/07/21 11:33:12 server.go:46: webserver.Start(): listening on port 8080
 ```
-
-Here is an [example](https://github.com/thisdougb/cleango/blob/204df73075f69d8ff3fff555f1b739f40c060d3a/config/dev_config.go#L1) that says include this file when -tags is dev or test.
-And in the GitHub action, [here](https://github.com/thisdougb/cleango/blob/204df73075f69d8ff3fff555f1b739f40c060d3a/.github/workflows/branches.yaml#L43) I run test with that tag.
-Pulling in that particular file.
-
-This is good because if you're test want to run quicker, you can set low limits for various things.
 
 #### Passing Datastore Reference
 
@@ -68,6 +64,7 @@ I mashed up the Clean Architecture style with [this](https://www.alexedwards.net
 That's where my Env struct came from.
 
 #### Use Case
+
 Usecase is a core Clean Architecture idea, and a little vague.
 I think of it as, 'an action that happens, like making a coffee.'
 There's often multiple steps to produce an outcome.
@@ -75,6 +72,7 @@ There's often multiple steps to produce an outcome.
 An http handler depends on a usecase, but the usecase knows nothing about the http handler.
 
 #### File Numbering
+
 I use file name numbering for files that are part of the templating pattern.
 This is purely to make scanning dirs and finding what you expect to always be there much quicker.
 
