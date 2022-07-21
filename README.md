@@ -43,6 +43,7 @@ $ redis-cli
 1) "app:thing:1:status"
 127.0.0.1:6379> get "app:thing:1:status"
 "1"
+127.0.0.1:6379>
 ```
 
 #### Logging
