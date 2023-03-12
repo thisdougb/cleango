@@ -28,7 +28,7 @@ $ find . \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i ''
 ```
 Then run (assumes a local Redis instance):
 ```
-$ go run -tags dev api/server.go
+$ go run -tags dev main.go
 2022/07/21 11:33:12 server.go:27: Datastore connecting, host: 'localhost:6379', username:
 2022/07/21 11:33:12 server.go:34: Datastore connected.
 2022/07/21 11:33:12 server.go:46: webserver.Start(): listening on port 8080
