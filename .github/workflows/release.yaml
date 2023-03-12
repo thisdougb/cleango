@@ -8,6 +8,16 @@ on:
 permissions:
   contents: write
 
+# doc: https://goreleaser.com/customization/builds/
+builds:
+  - main: ./api/
+    id: "cleango"
+    binary: cleango
+    goos:
+      - linux
+      - darwin
+      - windows
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
