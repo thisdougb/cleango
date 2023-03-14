@@ -1,17 +1,11 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 )
 
 type Config struct{}
-
-// When running mulitple apps in an env, prefix the env vars to give scope separation
-const (
-	envVarPrefix = "MYAPP_"
-)
 
 var defaultValues = map[string]interface{}{
 	"API_PORT":         "8080",      // api listens on this port
@@ -46,8 +40,7 @@ func (c *Config) ValueAsBool(key string) bool {
 // Private methods here
 func (c *Config) getEnvVar(key string, fallback interface{}) interface{} {
 
-	fullEnvVarName := fmt.Sprintf("%s%s", envVarPrefix, key)
-	value, exists := os.LookupEnv(fullEnvVarName)
+	value, exists := os.LookupEnv(key)
 	if !exists {
 		return fallback
 	}

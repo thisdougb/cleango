@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/thisdougb/cleango/api/handlers"
 	"github.com/thisdougb/cleango/config"
+	"github.com/thisdougb/cleango/handlers"
 	"github.com/thisdougb/cleango/pkg/datastore/redis"
 	"github.com/thisdougb/cleango/pkg/usecase/enablething"
+	"github.com/thisdougb/cleango/pkg/usecase/ourpurpose"
 )
 
 func init() {
@@ -26,8 +27,7 @@ func main() {
 		cfg.ValueAsStr("REDIS_PASSWORD"),
 		cfg.ValueAsBool("REDIS_TLS"))
 
-	// To be container friendly loop until we get a datastore connection. Otherwise the container
-	// goes into crash-loop and it's harder to troubleshoot.
+	// Loop until we get a datastore connection.
 	for {
 		log.Printf("Datastore connecting, host: '%s:%s', username: %s\n",
 			cfg.ValueAsStr("REDIS_HOST"),
@@ -44,8 +44,12 @@ func main() {
 	}
 	defer ds.Disconnect()
 
-	env := &handlers.Env{EnableThingService: enablething.NewService(ds)}
+	// use env allows easy injection of 'ds', which aids testing
+	env := &handlers.Env{
+		OurPurposeService:  ourpurpose.NewService(ds),
+		EnableThingService: enablething.NewService(ds)}
 
+	http.HandleFunc("/", env.HomePage)
 	http.HandleFunc("/thing/enable/", env.EnableThing)
 
 	log.Println("webserver.Start(): listening on port", cfg.ValueAsStr("API_PORT"))

@@ -6,7 +6,7 @@ A simple way to _apply_ config settings to a Go app, when run locally, and in Do
 
 #### Strategy
 
-- Use shell env vars to apply settings, this gives greatest flexibility and simplicity (locally easy, K8s secrets easy, Dockerfile easy, etc).
+- Use shell env vars to apply settings, this gives greatest flexibility and simplicity
 - Return reasonable defaults, when a setting is un-configured.
 - Simple and readable usage in code, at the point of use.
 
@@ -29,19 +29,7 @@ func main() {
 }
 ```
 
-Note that we do not use the _envVarPrefix_ in code, which keeps the app code portable. Handling the type casting is also done for us in config, making the in-code method calls simpler and more readable.
-
 An interesting side note is that settings are read dynamically, so we can change them in the environment without restarting the app.
-
-#### Shell Environment Variables
-
-To provide scope, when running multiple apps, the env vars should be prefixed with _envVarPrefix_.
-
-```
-$ env | grep MYAPP_
-MYAPP_USERNAME=dev
-MYAPP_PASSWORD=r2d28C3P0
-```
 
 #### Kubernetes Secrets
 
