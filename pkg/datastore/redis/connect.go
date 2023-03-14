@@ -3,8 +3,9 @@ package redis
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"strconv"
+
+	"github.com/go-redis/redis/v8"
 )
 
 // Connect to set Redis connection string
@@ -33,7 +34,8 @@ func (d *Datastore) Connect() error {
 
 		d.client = redis.NewClient(&redis.Options{
 			Addr:     connection,
-			Password: "",
+			Username: d.username,
+			Password: d.password,
 			DB:       i,
 		})
 	}
