@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/thisdougb/cleango/api/handlers"
 	"github.com/thisdougb/cleango/config"
+	"github.com/thisdougb/cleango/handlers"
 	"github.com/thisdougb/cleango/pkg/datastore/redis"
 	"github.com/thisdougb/cleango/pkg/usecase/enablething"
 )
