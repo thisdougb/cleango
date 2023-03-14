@@ -26,8 +26,7 @@ func main() {
 		cfg.ValueAsStr("REDIS_PASSWORD"),
 		cfg.ValueAsBool("REDIS_TLS"))
 
-	// To be container friendly loop until we get a datastore connection. Otherwise the container
-	// goes into crash-loop and it's harder to troubleshoot.
+	// Loop until we get a datastore connection.
 	for {
 		log.Printf("Datastore connecting, host: '%s:%s', username: %s\n",
 			cfg.ValueAsStr("REDIS_HOST"),
