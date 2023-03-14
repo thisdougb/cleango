@@ -29,11 +29,25 @@ $ find . \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i ''
 Then run (assumes a local Redis instance):
 ```
 $ go run -tags dev main.go
-2022/07/21 11:33:12 server.go:27: Datastore connecting, host: 'localhost:6379', username:
-2022/07/21 11:33:12 server.go:34: Datastore connected.
-2022/07/21 11:33:12 server.go:46: webserver.Start(): listening on port 8080
+2023/03/14 08:40:01 main.go:32: Datastore connecting, host: 'localhost:6379', username: 
+2023/03/14 08:40:01 main.go:39: Datastore connected.
+2023/03/14 08:40:01 main.go:55: webserver.Start(): listening on port 8080
 ```
 You can test everything works:
+
+```
+$ curl http://localhost:8080   
+<!DOCTYPE html>
+<html lang="en">
+    <head></head>
+    <body>
+        <h4>Hello World!</h4>
+    </body>
+</html>
+```
+
+and 
+
 ```
 $ curl -X POST http://localhost:8080/thing/enable/ -H "Content-Type: application/json" -d '{"thing_id": 1}'                                                                             
 OK
@@ -45,6 +59,36 @@ $ redis-cli
 "1"
 127.0.0.1:6379>
 ```
+#### Emedded Files
+
+Using the _embed_ module we can include the static template files in the resulting Go binary.
+This means a deployable Go app that uses html templates will work.
+
+On startup the following is printed to help understanding:
+
+```
+2023/03/14 08:40:01 env.go:87: dir .
+2023/03/14 08:40:01 env.go:87: dir templates
+2023/03/14 08:40:01 env.go:90: file: templates/footer.gohtml
+2023/03/14 08:40:01 env.go:90: file: templates/header.gohtml
+2023/03/14 08:40:01 env.go:90: file: templates/index.gohtml
+2023/03/14 08:40:01 env.go:80: embed FS file: templates/footer.gohtml
+2023/03/14 08:40:01 env.go:80: embed FS file: templates/header.gohtml
+2023/03/14 08:40:01 env.go:80: embed FS file: templates/index.gohtml
+```
+
+The _embed_ module can be hard to figure out from the docs.
+The key thing is to know the FS contains file paths.
+
+But we use the templates using the template name (string), which is coincidentally the file name.
+The template name (string) is used in the define statement within the template file.
+These two strings must match, otherwise a blank html page is served.
+
+```
+2023/03/14 08:40:02 handle_homepage.go:47: templates: ; defined templates are: "index.gohtml", "header.gohtml", "footer.gohtml"
+```
+
+Logging shows us the file and line that prints the above output, so it can be followed for understanding.
 
 #### Logging
 

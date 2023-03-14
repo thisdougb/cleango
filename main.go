@@ -9,6 +9,7 @@ import (
 	"github.com/thisdougb/cleango/handlers"
 	"github.com/thisdougb/cleango/pkg/datastore/redis"
 	"github.com/thisdougb/cleango/pkg/usecase/enablething"
+	"github.com/thisdougb/cleango/pkg/usecase/ourpurpose"
 )
 
 func init() {
@@ -43,8 +44,12 @@ func main() {
 	}
 	defer ds.Disconnect()
 
-	env := &handlers.Env{EnableThingService: enablething.NewService(ds)}
+	// use env allows easy injection of 'ds', which aids testing
+	env := &handlers.Env{
+		OurPurposeService:  ourpurpose.NewService(ds),
+		EnableThingService: enablething.NewService(ds)}
 
+	http.HandleFunc("/", env.HomePage)
 	http.HandleFunc("/thing/enable/", env.EnableThing)
 
 	log.Println("webserver.Start(): listening on port", cfg.ValueAsStr("API_PORT"))
