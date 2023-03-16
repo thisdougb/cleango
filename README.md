@@ -10,6 +10,7 @@ A re-usable GoLang template for a web/api server, that saves me time and ensures
 
 - a runnable app as a template, so we start from a known-good
 - include features most likely to be used, to avoid masses of boiler-plate code
+- an easy method to create releases
 - focus on making development easier and simpler
 
 Use the button above "Use this template".
@@ -59,6 +60,28 @@ $ redis-cli
 "1"
 127.0.0.1:6379>
 ```
+
+#### Release Packages
+
+ A GitHub action uses goreleaser to automatically build [release packages](https://github.com/thisdougb/cleango/releases).
+ The release includes the README file, and the LICENSE file.
+
+```
+$ git checkout main   
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+
+$ git tag -a v0.1.0 -m "initial release"
+
+$ git push origin v0.1.0                                                                        
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 191 bytes | 191.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:thisdougb/cleango.git
+ * [new tag]         v0.1.0 -> v0.1.0
+ ```
+
 #### Emedded Files
 
 Using the _embed_ module we can include the static template files in the resulting Go binary.
