@@ -1,5 +1,5 @@
-//go:build dev || test
-// +build dev test
+//go:build dev
+// +build dev
 
 package config
 

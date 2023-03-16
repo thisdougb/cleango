@@ -1,11 +1,13 @@
-// +build dev test
+//go:build dev
+// +build dev
 
 package enablething
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // using a test table
